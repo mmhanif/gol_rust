@@ -1,0 +1,97 @@
+
+pub fn next(state: &Vec<(i32, i32)>) -> Vec<(i32, i32)> {
+    let mut next_state = vec![];
+    for cell in neighborhood(&state) {
+        match num_living_neighbors(&cell, &state) {
+            3     => next_state.push((cell.0, cell.1)),
+            2 if is_alive(&cell, state) => next_state.push((cell.0, cell.1)),
+            _     => {},
+        }
+    }
+    next_state
+}
+
+fn num_living_neighbors(cell: &(i32, i32), state: &Vec<(i32,i32)>) -> i32 {
+    let mut count = 0;
+    for i in -1..2 {
+        for j in -1..2 {
+            if !(i == 0 && j == 0) {
+                if is_alive(&(cell.0 + i, cell.1 + j), state) {
+                    count += 1;
+                    println!("({},{}) found neighbor at ({},{})", cell.0, cell.1, cell.0 + i, cell.1 + j);
+                }
+            }
+        }
+    }
+    println!("({},{}) neighbors = {}", cell.0, cell.1, count);
+    count
+}
+
+fn neighborhood(state: &Vec<(i32,i32)>) -> Vec<(i32,i32)> {
+    let mut the_hood = vec![];
+    for cell in state {
+        the_hood.push((cell.0, cell.1));
+        for neighbor in neighbors(&cell) {
+            if !the_hood.contains(&neighbor) {
+                the_hood.push((neighbor.0, neighbor.1));
+            }
+        }
+    }
+    the_hood
+}
+
+fn is_alive(cell: &(i32,i32), state: &Vec<(i32,i32)>) -> bool {
+    state.contains(&cell)
+}
+
+fn neighbors(cell: &(i32,i32)) -> Vec<(i32,i32)> {
+    let mut the_neighbors = vec![];
+    for i in -1..2 {
+        for j in -1..2 {
+            if !(i == 0 && j == 0) {
+                    the_neighbors.push((cell.0 + i, cell.1 + j));
+                }
+            }
+        }
+    the_neighbors
+}
+
+
+#[test]
+fn empty_universe_stays_empty() {
+    let initial_state = vec![];
+    let next_state = next(&initial_state);
+    assert_eq!(initial_state, next_state);
+}
+
+#[test]
+fn living_cell_with_no_living_neighbors_dies() {
+    let initial_state = vec![(0,0)];
+    let next_state: Vec<(i32,i32)> = next(&initial_state);
+    let expected_state: Vec<(i32,i32)> = vec![];
+    assert_eq!(expected_state, next_state);
+}
+
+#[test]
+fn living_cell_with_two_living_neighbors_lives() {
+    let initial_state = vec![(0,0), (1,0), (0,1)];
+    let next_state: Vec<(i32,i32)> = next(&initial_state);
+    let expected_state: Vec<(i32,i32)> = vec![(0,0), (1,0), (0,1)];
+    assert_eq!(expected_state, next_state);
+}
+
+#[test]
+fn living_cell_with_four_living_neighbors_lives() {
+    let initial_state = vec![(0,0), (-1,-1), (-1,1), (1,-1), (1, 1)];
+    let next_state: Vec<(i32,i32)> = next(&initial_state);
+    //let expected_state: Vec<(i32,i32)> = vec![];
+    //assert_eq!(expected_state, next_state);
+    assert!(!next_state.contains(&(0,0)));
+}
+
+#[test]
+fn dead_cell_with_three_living_neighbors_lives() {
+    let initial_state = vec![(0,0), (1,0), (0,1)];
+    let next_state: Vec<(i32,i32)> = next(&initial_state);
+    assert!(next_state.contains(&(1,1)));
+}
