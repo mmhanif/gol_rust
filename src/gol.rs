@@ -1,5 +1,9 @@
+//! Simple functional implementation of Conway' Game of Life (GoL) using Vectors
+//!
+//! Basic GoL implementation using Vectors of 2-tuples to model state
 
-
+/// Given a vector of 2-tuples representing initial state of universe
+/// returns a new vector giving the next state of the universe
 pub fn next(state: &Vec<(i32, i32)>) -> Vec<(i32, i32)> {
     let mut next_state = vec![];
     for cell in neighborhood(&state) {
@@ -12,6 +16,8 @@ pub fn next(state: &Vec<(i32, i32)>) -> Vec<(i32, i32)> {
     next_state
 }
 
+// Given a specific cell and state of the universe, return the number of living
+// neighbors of that cell
 fn num_living_neighbors(cell: &(i32, i32), state: &Vec<(i32,i32)>) -> i32 {
     let mut count = 0;
     for i in -1..2 {
@@ -28,6 +34,7 @@ fn num_living_neighbors(cell: &(i32, i32), state: &Vec<(i32,i32)>) -> i32 {
     count
 }
 
+// Return a Vector of living cells and all their neighboring cells
 fn neighborhood(state: &Vec<(i32,i32)>) -> Vec<(i32,i32)> {
     let mut the_hood = vec![];
     for cell in state {
@@ -42,14 +49,16 @@ fn neighborhood(state: &Vec<(i32,i32)>) -> Vec<(i32,i32)> {
             }
         }
     }
-    
+
     the_hood
 }
 
+// Basic helper, returns true if given cell is present in given state of the universe
 fn is_alive(cell: &(i32,i32), state: &Vec<(i32,i32)>) -> bool {
     state.contains(&cell)
 }
 
+// For a given cell, represented as a 2-tuple, return a vector of all neighboring cells
 fn neighbors(cell: &(i32,i32)) -> Vec<(i32,i32)> {
     let mut the_neighbors = vec![];
     for i in -1..2 {
@@ -62,6 +71,7 @@ fn neighbors(cell: &(i32,i32)) -> Vec<(i32,i32)> {
     the_neighbors
 }
 
+// Tests **********
 
 #[test]
 fn empty_universe_stays_empty() {
