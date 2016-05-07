@@ -5,18 +5,25 @@ use std::collections::HashSet;
 extern crate timeit;
 
 fn main() {
-    let mut v = vec![(25,25), (24,25), (24,26), (25, 24), (26, 25)];
-    let mut state: HashSet<_> = v.iter().cloned().collect();
+    let mut state_1 = vec![(25,25), (24,25), (24,26), (25, 24), (26, 25)];
+    let mut state_2: HashSet<_> = state_1.iter().cloned().collect();
+    let mut state_3: HashSet<_> = state_1.iter().cloned().collect();
 
     timeit! ({
         for _ in 0..1000 {
-            v = gol_rust::gol_1::next(&v);
+            state_1 = gol_rust::gol_1::next(&state_1);
         }
     });
 
     timeit! ({
         for _ in 0..1000 {
-            state = gol_rust::gol_2::next(&state);
+            state_2 = gol_rust::gol_2::next(&state_2);
+        }
+    });
+
+    timeit! ({
+        for _ in 0..1000 {
+            state_3 = gol_rust::gol_3::next(&state_3);
         }
     });
 
